@@ -22,7 +22,7 @@ var lyr_Madras_map_modified_1 = new ol.layer.Image({
     attributions: ' ',
                                 projection: 'EPSG:3857',
                                 alwaysInRange: true,
-                                imageExtent: [8930320.563942, 1459878.964954, 8940756.502626, 1476746.126425]
+                                imageExtent: [8930044.501525, 1459940.623834, 8940989.569300, 1477292.259983]
                             })
                         });
 
