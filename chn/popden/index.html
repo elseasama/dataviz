@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/Populationdensity_1.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:11
+        }).fitBounds([[12.839362830698636,79.95001842550651],[13.241466752877333,80.53332565982886]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_googlemaps_0');
+        map.getPane('pane_googlemaps_0').style.zIndex = 400;
+        var layer_googlemaps_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
+            pane: 'pane_googlemaps_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 11,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_googlemaps_0;
+        map.addLayer(layer_googlemaps_0);
+        function pop_Populationdensity_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? autolinker.link(feature.properties['name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Zone No:</th>\
+                        <td>' + (feature.properties['ZoneNo'] !== null ? autolinker.link(feature.properties['ZoneNo'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Zone name:</th>\
+                        <td>' + (feature.properties['ZoneName'] !== null ? autolinker.link(feature.properties['ZoneName'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Ward name:</th>\
+                        <td>' + (feature.properties['WardName'] !== null ? autolinker.link(feature.properties['WardName'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Estimated population(2020)</th>\
+                        <td>' + (feature.properties['PopulationEsti2020'] !== null ? autolinker.link(feature.properties['PopulationEsti2020'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Area (km2)</th>\
+                        <td>' + (feature.properties['Area(km2)'] !== null ? autolinker.link(feature.properties['Area(km2)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Population density</th>\
+                        <td>' + (feature.properties['PopulationDensity'] !== null ? autolinker.link(feature.properties['PopulationDensity'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Populationdensity_1_0(feature) {
+            if (feature.properties['PopulationDensity'] >= 1163.000000 && feature.properties['PopulationDensity'] <= 5000.000000 ) {
+                return {
+                pane: 'pane_Populationdensity_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5920000000000001)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,245,240,0.5920000000000001)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PopulationDensity'] >= 5000.000000 && feature.properties['PopulationDensity'] <= 10000.000000 ) {
+                return {
+                pane: 'pane_Populationdensity_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5920000000000001)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,214,196,0.5920000000000001)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PopulationDensity'] >= 10000.000000 && feature.properties['PopulationDensity'] <= 15000.000000 ) {
+                return {
+                pane: 'pane_Populationdensity_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5920000000000001)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,164,134,0.5920000000000001)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PopulationDensity'] >= 15000.000000 && feature.properties['PopulationDensity'] <= 20000.000000 ) {
+                return {
+                pane: 'pane_Populationdensity_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5920000000000001)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,112,80,0.5920000000000001)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PopulationDensity'] >= 20000.000000 && feature.properties['PopulationDensity'] <= 25000.000000 ) {
+                return {
+                pane: 'pane_Populationdensity_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5920000000000001)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,55,42,0.5920000000000001)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PopulationDensity'] >= 25000.000000 && feature.properties['PopulationDensity'] <= 30000.000000 ) {
+                return {
+                pane: 'pane_Populationdensity_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5920000000000001)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(186,20,25,0.5920000000000001)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PopulationDensity'] >= 30000.000000 && feature.properties['PopulationDensity'] <= 33206.000000 ) {
+                return {
+                pane: 'pane_Populationdensity_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5920000000000001)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(103,0,13,0.5920000000000001)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_Populationdensity_1');
+        map.getPane('pane_Populationdensity_1').style.zIndex = 401;
+        map.getPane('pane_Populationdensity_1').style['mix-blend-mode'] = 'normal';
+        var layer_Populationdensity_1 = new L.geoJson(json_Populationdensity_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Populationdensity_1',
+            layerName: 'layer_Populationdensity_1',
+            pane: 'pane_Populationdensity_1',
+            onEachFeature: pop_Populationdensity_1,
+            style: style_Populationdensity_1_0,
+        });
+        bounds_group.addLayer(layer_Populationdensity_1);
+        map.addLayer(layer_Populationdensity_1);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Population density<br /><table><tr><td style="text-align: center;"><img src="legend/Populationdensity_1_116350000.png" /></td><td>1163 - 5000</td></tr><tr><td style="text-align: center;"><img src="legend/Populationdensity_1_5000100001.png" /></td><td>5000 - 10000</td></tr><tr><td style="text-align: center;"><img src="legend/Populationdensity_1_10000150002.png" /></td><td>10000 - 15000</td></tr><tr><td style="text-align: center;"><img src="legend/Populationdensity_1_15000200003.png" /></td><td>15000 - 20000</td></tr><tr><td style="text-align: center;"><img src="legend/Populationdensity_1_20000250004.png" /></td><td>20000 - 25000</td></tr><tr><td style="text-align: center;"><img src="legend/Populationdensity_1_25000300005.png" /></td><td>25000 - 30000</td></tr><tr><td style="text-align: center;"><img src="legend/Populationdensity_1_30000332066.png" /></td><td>30000 - 33206</td></tr></table>': layer_Populationdensity_1,"google maps": layer_googlemaps_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
